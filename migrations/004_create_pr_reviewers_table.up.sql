@@ -1,6 +1,6 @@
 CREATE TABLE pr_reviewers (
     pull_request_id UUID NOT NULL REFERENCES pull_requests(pull_request_id) ON DELETE CASCADE,
-    UUID NOT NULL REFERENCES users(user_id),
+    user_id UUID NOT NULL REFERENCES users(user_id),
     assigned_at TIMESTAMP NOT NULL DEFAULT now(),
     PRIMARY KEY (pull_request_id, user_id)
 );
