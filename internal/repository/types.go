@@ -1,20 +1,38 @@
 package repository
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	UserID   string `json:"id"`
-	Username string `json:"username"`
-	TeamName string `json:"team_name"`
-	IsActive bool   `json:"is_active"`
+	UserID   string
+	Username string
+	TeamName string
+	IsActive bool
 }
 
 type PullRequest struct {
 	// pr - pull request
-	PrID      string    `json:"pull_request_id"`
-	PrName    string    `json:"pull_request_name"`
-	AuthorID  string    `json:"author_id"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	MergedAt  time.Time `json:"merged_at"`
+	PrID      string
+	PrName    string
+	AuthorID  string
+	Status    string
+	CreatedAt *time.Time
+	MergedAt  *time.Time
+}
+
+type PullRequestShort struct {
+	PullRequestID   string
+	PullRequestName string
+	AuthorID        string
+	Status          string
+}
+
+type UserStatsResponse struct {
+	UserID    string
+	Username  string
+	TotalPRs  int // всего назначенных PR
+	OpenPRs   int // открытых PR
+	MergedPRs int // мержнутых PR
+
 }
