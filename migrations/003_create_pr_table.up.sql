@@ -1,7 +1,7 @@
 CREATE TABLE pull_requests (
-    pull_request_id UUID PRIMARY KEY,
+    pull_request_id TEXT PRIMARY KEY,
     pull_request_name VARCHAR(100) NOT NULL,
-    author_id UUID NOT NULL REFERENCES users(user_id),
+    author_id TEXT  NOT NULL REFERENCES users(user_id),
     status TEXT NOT NULL CHECK(status IN ('OPEN', 'MERGED')),
     created_at TIMESTAMP,
     merged_at TIMESTAMP NULL
