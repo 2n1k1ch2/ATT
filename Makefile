@@ -31,3 +31,16 @@ test:
 
 swagger-generate:
 	swag init -g main.go -o ./docs/swagger
+
+help:
+	@echo "Доступные команды:"
+	@echo "  run           - Запустить приложение"
+	@echo "  build         - Собрать приложение"
+	@echo "  docker-up     - Запустить Docker контейнеры"
+	@echo "  docker-down   - Остановить Docker контейнеры"
+	@echo "  migrate-up    - Применить миграции базы данных"
+	@echo "  migrate-down  - Откатить миграции базы данных"
+	@echo "  lint          - Запустить линтер"
+	@echo "  test          - Запустить тесты"
+	@echo "  swagger-generate - Сгенерировать Swagger документацию"
+	@echo "  help          - Показать эту справку"
