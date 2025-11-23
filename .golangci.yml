@@ -1,4 +1,6 @@
 run:
+  skip-dirs:
+      - docs
   timeout: 5m
 
 linters:
