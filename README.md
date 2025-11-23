@@ -5,7 +5,7 @@
 
 Есть доп.ручка по сборке статистики всех пользователей
 
-Есть конфиг линтера, запускать linter make lint
+Есть конфиг линтера, запускать make lint
 
 Доп возможности описаны в make help
 
@@ -14,20 +14,34 @@
 Есть сваггер для удобства тестирования ручек (опционально pgadmin для удобного просмотра бд)
 
 ## Основные эндпоинты
-POST /segments - создание сегмента
+Team 
 
-DELETE /segments - удаление сегмента
+POST /api/v1/team/add - Создание новой команды
 
-POST /user-segments - управление сегментами пользователя
+GET /api/v1/team/get - Получение списка пользователей команды
 
-GET /user-segments/{id} - получение сегментов пользователя
+Users
 
-GET /stats - статистика по всем пользователям
+POST /api/v1/users/setIsActive - Изменение флага активности пользователя
+
+GET /api/v1/users/getReview - Получение назначенных PR для пользователя
+
+Pull Request 
+
+POST /api/v1/pullRequest/create - Создание нового PR с автоматическим назначением ревьюверов
+
+POST /api/v1/pullRequest/merge - Слияние PR (идемпотентная операция)
+
+POST /api/v1/pullRequest/reassign - Переназначение ревьювера
+
+Statistic
+
+GET /api/v1/statistic/user - Статистика по пользователям
+
 ## Данные для pgadmin
-PGAdmin
 Для удобного просмотра базы данных доступен PGAdmin:
 
-URL: http://localhost:5050
+URL: http://localhost:8081
 
 Email: admin@avito.ru
 
