@@ -1,6 +1,4 @@
 run:
-  skip-dirs:
-      - docs
   timeout: 5m
 
 linters:
@@ -10,8 +8,6 @@ linters:
     - gosimple
     - unused
     - errcheck
-    - gofmt
-    - gofumpt
     - revive
 
 linters-settings:
@@ -19,6 +15,8 @@ linters-settings:
     severity: warning
 
 issues:
+  exclude-dirs:
+    - docs
   exclude-rules:
     - path: _test\.go
       linters:
