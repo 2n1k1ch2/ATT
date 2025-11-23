@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    user_id UUID PRIMARY KEY,
+    user_id TEXT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     team_name TEXT NOT NULL REFERENCES teams(team_name),
     is_active BOOLEAN NOT NULL DEFAULT TRUE
