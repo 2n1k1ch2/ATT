@@ -1,0 +1,294 @@
+basePath: /api/v1
+definitions:
+  dto.CreateTeamRequest:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/dto.TeamMember'
+        type: array
+      team_name:
+        type: string
+    type: object
+  dto.CreateTeamResponse:
+    properties:
+      team:
+        $ref: '#/definitions/dto.Team'
+    type: object
+  dto.GetTeamResponse:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/dto.TeamMember'
+        type: array
+      team_name:
+        type: string
+    type: object
+  dto.GetUserReviewsResponse:
+    properties:
+      pull_requests:
+        items:
+          $ref: '#/definitions/dto.PullRequestShort'
+        type: array
+      user_id:
+        type: string
+    type: object
+  dto.MergePullRequestRequest:
+    properties:
+      pull_request_id:
+        type: string
+    type: object
+  dto.PullRequest:
+    properties:
+      assigned_reviewers:
+        items:
+          type: string
+        type: array
+      author_id:
+        type: string
+      createdAt:
+        type: string
+      mergedAt:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      status:
+        description: OPEN | MERGED
+        type: string
+    type: object
+  dto.PullRequestShort:
+    properties:
+      author_id:
+        type: string
+      pull_request_id:
+        type: string
+      pull_request_name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.ReassignReviewerRequest:
+    properties:
+      old_user_id:
+        type: string
+      pull_request_id:
+        type: string
+    type: object
+  dto.ReassignReviewerResponse:
+    properties:
+      pr:
+        $ref: '#/definitions/dto.PullRequest'
+      replaced_by:
+        type: string
+    type: object
+  dto.SetUserIsActiveRequest:
+    properties:
+      is_active:
+        type: boolean
+      user_id:
+        type: string
+    type: object
+  dto.SetUserIsActiveResponse:
+    properties:
+      user:
+        $ref: '#/definitions/dto.User'
+    type: object
+  dto.Team:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/dto.TeamMember'
+        type: array
+      team_name:
+        type: string
+    type: object
+  dto.TeamMember:
+    properties:
+      is_active:
+        type: boolean
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.User:
+    properties:
+      is_active:
+        type: boolean
+      team_name:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  http.ErrorResponse:
+    properties:
+      error: {}
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for PR Reviewer Assignment Service
+  title: PR Reviewer Assignment Service (Test Task, Fall 2025)
+  version: 1.0.0
+paths:
+  /pullRequest/merge:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID PR
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MergePullRequestRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PullRequest'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Пометить PR как MERGED (идемпотентно)
+      tags:
+      - PullRequests
+  /pullRequest/reassign:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные переназначения
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReassignReviewerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReassignReviewerResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Переназначить ревьювера на другого из команды
+      tags:
+      - PullRequests
+  /team/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные команды
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateTeamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Создать команду с участниками (создаёт/обновляет пользователей)
+      tags:
+      - Teams
+  /team/get:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Название команды
+        in: query
+        name: team_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetTeamResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Получить команду с участниками
+      tags:
+      - Teams
+  /users/getReview:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetUserReviewsResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Получить PR'ы, где пользователь назначен ревьювером
+      tags:
+      - Users
+  /users/setIsActive:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID юзера и флаг активности
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SetUserIsActiveRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SetUserIsActiveResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Установить флаг активности пользователя
+      tags:
+      - Users
+swagger: "2.0"
+tags:
+- name: Teams
+- name: Users
+- name: PullRequests
+- name: Health

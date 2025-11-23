@@ -1,6 +1,7 @@
 run:
   timeout: 5m
-
+  build-tags:
+    - exclude_swagger
 linters:
   enable:
     - govet
