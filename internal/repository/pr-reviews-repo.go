@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -19,6 +20,7 @@ func (r *PrReviewsRepo) BeginTx(ctx context.Context) (pgx.Tx, error) {
 }
 
 func (r *PrReviewsRepo) AddReviewer(ctx context.Context, tx pgx.Tx, prID, userID string) error {
+
 	_, err := tx.Exec(ctx, `
 		INSERT INTO pr_reviewers (pull_request_id, user_id, assigned_at)
 		VALUES ($1, $2, NOW())
@@ -27,13 +29,21 @@ func (r *PrReviewsRepo) AddReviewer(ctx context.Context, tx pgx.Tx, prID, userID
 }
 
 func (r *PrReviewsRepo) RemoveReviewer(ctx context.Context, tx pgx.Tx, prID, userID string) error {
-	_, err := tx.Exec(ctx, `
+	cmdTag, err := tx.Exec(ctx, `
 		DELETE FROM pr_reviewers
 		WHERE pull_request_id = $1 AND user_id = $2
 	`, prID, userID)
-	return err
-}
 
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("reviewer not found")
+	}
+
+	return nil
+}
 func (r *PrReviewsRepo) GetReviewers(ctx context.Context, tx pgx.Tx, prID string) ([]User, error) {
 	rows, err := tx.Query(ctx, `
 		SELECT u.user_id, u.username, u.team_name, u.is_active
@@ -49,7 +59,7 @@ func (r *PrReviewsRepo) GetReviewers(ctx context.Context, tx pgx.Tx, prID string
 	var users []User
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.UserID, &u.Username, &u.TeamName, &u.IsActive); err != nil {
+		if err = rows.Scan(&u.UserID, &u.Username, &u.TeamName, &u.IsActive); err != nil {
 			return nil, err
 		}
 		users = append(users, u)
